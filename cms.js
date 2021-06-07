@@ -50,26 +50,84 @@ function homePage() {
 
 function addDepartmentPrompts() {
 	console.log('add d');
-	inquirer
-		.prompt(questions.addDepartmentQuestions)
-		.then((res) => console.log('res :>> ', res))
-		.then(function () {
-			homePage();
-		});
+	inquirer.prompt(questions.addDepartmentQuestions).then((res) => {
+		connection.query(
+			`INSERT INTO department SET ?`,
+			{
+				name: res.departmentName,
+			},
+			(err) => {
+				if (err) throw err;
+				console.log(`You have created new department: ${res.departmentName}`);
+				homePage();
+			}
+		);
+	});
 }
 function addRolePrompts() {
-	console.log('add r');
-	inquirer
-		.prompt(questions.addRoleQuestions)
-		.then((res) => console.log('res :>> ', res))
-		.then(function () {
-			homePage();
-		});
+	connection.query(
+		'SELECT id, name AS department FROM department',
+		(err, results) => {
+			console.table(results);
+			results.forEach((element) => {
+				console.log('element :>> ', element);
+			});
+			inquirer
+				.prompt([
+					...questions.addRoleQuestions,
+					{
+						message: 'Please choose the department for this role',
+						type: 'list',
+						name: 'roleDepartmentName',
+						choices() {
+							const choiceArray = [];
+							results.forEach((element) => {
+								choiceArray.push(element.department);
+							});
+							return choiceArray;
+						},
+					},
+				])
+				.then((res) => {
+					console.log('res :>> ', res);
+					const chosenDepartmentID = results.filter(
+						(object) => object.department === res.roleDepartmentName
+					)[0];
+					connection.query(
+						`INSERT INTO role SET ?`,
+						{
+							title: res.roleName,
+							salary: res.roleSalary,
+							department_id: chosenDepartmentID.id,
+						},
+						(err) => {
+							if (err) throw err;
+							console.log(`You succesfully created new role: ${res.roleName}`);
+							homePage();
+						}
+					);
+				});
+		}
+	);
 }
 function addEmployeePrompts() {
 	console.log('add e');
 	inquirer
-		.prompt(questions.addEmployeeQuestions)
+		.prompt([
+			...questions.addEmployeeQuestions,
+			{
+				message: 'Please choose employee role',
+				type: 'list',
+				name: 'employeeRole',
+				choices: ['get list of roles'],
+			},
+			{
+				message: "Please choose the employee's manager",
+				type: 'list',
+				name: 'employeeManager',
+				choices: ['get list of managers'],
+			},
+		])
 		.then((res) => console.log('res :>> ', res))
 		.then(function () {
 			homePage();
@@ -153,14 +211,9 @@ function viewEmployeesByManager() {
 					},
 				])
 				.then((res) => {
-					// console.log('res :>> ', res);
-					// console.log('results :>> ', results);
-					// console.log('res.managerOfEmployees :>> ', res.managerOfEmployees);
-					// console.log('employee.manager[0]:>> ', results[0].manager);
 					const chosenManager = results.filter(
 						(object) => object.manager === res.managerOfEmployees
 					)[0];
-					console.log('chosenManager :>> ', chosenManager.manager_id);
 					connection.query(
 						`SELECT
 						employee.first_name,
@@ -180,8 +233,6 @@ function viewEmployeesByManager() {
 				});
 		}
 	);
-	// console.log(results);
-	// console.table(results);
 }
 function updateEmployeeRole() {
 	console.log('u r');

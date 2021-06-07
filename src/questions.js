@@ -38,12 +38,6 @@ const addRoleQuestions = [
 		type: 'input',
 		name: 'roleSalary',
 	},
-	{
-		message: 'Please choose the department for this role',
-		type: 'list',
-		name: 'roleDepartmentID',
-		choices: ['get list of departments'],
-	},
 ];
 const addEmployeeQuestions = [
 	{
@@ -55,18 +49,6 @@ const addEmployeeQuestions = [
 		message: 'Please enter the last name of the employee',
 		type: 'input',
 		name: 'employeeLastName',
-	},
-	{
-		message: 'Please choose employee role',
-		type: 'list',
-		name: 'employeeRole',
-		choices: ['get list of roles'],
-	},
-	{
-		message: "Please choose the employee's manager",
-		type: 'list',
-		name: 'employeeManager',
-		choices: ['get list of managers'],
 	},
 ];
 
