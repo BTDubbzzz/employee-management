@@ -45,6 +45,13 @@ function homePage() {
 				removeEmployee();
 				break;
 			case 'Exit':
+				console.log(`
+				
+-----------------------------------
+Exiting program, goodbye!
+------------------------------------
+
+`);
 				connection.end();
 				break;
 		}
@@ -60,7 +67,13 @@ function addDepartmentPrompts() {
 			},
 			(err) => {
 				if (err) throw err;
-				console.log(`You have created new department: ${res.departmentName}`);
+				console.log(`
+
+------------------------------------------------------
+You have created new department: ${res.departmentName}
+------------------------------------------------------				
+				
+`);
 				homePage();
 			}
 		);
@@ -74,7 +87,11 @@ function addRolePrompts() {
 				.prompt([
 					...questions.addRoleQuestions,
 					{
-						message: 'Please choose the department for this role',
+						message: `
+						
+Please choose the department for this role
+
+`,
 						type: 'list',
 						name: 'roleDepartmentName',
 						choices() {
@@ -99,7 +116,15 @@ function addRolePrompts() {
 						},
 						(err) => {
 							if (err) throw err;
-							console.log(`You succesfully created new role: ${res.roleName}`);
+							console.log(`
+
+
+--------------------------------------------------------							
+You succesfully created new role: ${res.roleName}
+--------------------------------------------------------
+
+
+							`);
 							homePage();
 						}
 					);
@@ -124,7 +149,11 @@ function addEmployeePrompts() {
 						.prompt([
 							...questions.addEmployeeQuestions,
 							{
-								message: 'Please choose employee role',
+								message: `
+								
+Please choose employee role
+
+`,
 								type: 'list',
 								name: 'employeeRole',
 								choices() {
@@ -136,7 +165,11 @@ function addEmployeePrompts() {
 								},
 							},
 							{
-								message: "Please choose the employee's manager",
+								message: `
+								
+Please choose the employee's manager
+
+`,
 								type: 'list',
 								name: 'employeeManager',
 								choices() {
@@ -169,11 +202,16 @@ function addEmployeePrompts() {
 								},
 								(err) => {
 									if (err) throw err;
-									console.log(
-										`You succesfully created new employee: ${
-											res.employeeFirstName + res.employeeLastName
-										}`
-									);
+									console.log(`
+
+-------------------------------------------------------------------------------------
+You succesfully created new employee: ${
+										res.employeeFirstName + ' ' + res.employeeLastName
+									}
+--------------------------------------------------------------------------------------
+										
+										
+										`);
 									homePage();
 								}
 							);
@@ -237,14 +275,18 @@ function viewEmployeesByManager() {
 		employee.manager_id,
 		CONCAT(manager.first_name,' ', manager.last_name) AS manager
 		FROM employee
-		LEFT JOIN employee AS manager
+		JOIN employee AS manager
 		ON employee.manager_id = manager.id
 		WHERE employee.manager_id IS NOT NULL`,
 		(err, results) => {
 			inquirer
 				.prompt([
 					{
-						message: 'Choose the Manager to see their employees',
+						message: `
+						
+Choose the Manager to see their employees
+
+`,
 						type: 'list',
 						name: 'managerOfEmployees',
 						choices() {
@@ -297,7 +339,11 @@ function updateEmployeeRole() {
 					inquirer
 						.prompt([
 							{
-								message: 'Please choose the employee to update their role',
+								message: `
+								
+Please choose the employee to update their role
+
+`,
 								type: 'list',
 								name: 'employeeToUpdate',
 								choices() {
@@ -309,7 +355,11 @@ function updateEmployeeRole() {
 								},
 							},
 							{
-								message: 'Please choose the new role to give the employee',
+								message: `
+								
+Please choose the new role to give the employee
+
+`,
 								type: 'list',
 								name: 'roleToGive',
 								choices() {
@@ -342,7 +392,13 @@ function updateEmployeeRole() {
 								(err) => {
 									if (err) throw err;
 									console.log(
-										`Successfully updated ${res.employeeToUpdate}'s role to ${res.roleToGive}`
+										`
+
+------------------------------------------------------------------------										
+Successfully updated ${res.employeeToUpdate}'s role to ${res.roleToGive}
+------------------------------------------------------------------------
+
+`
 									);
 									homePage();
 								}
@@ -373,7 +429,11 @@ function updateEmployeeManager() {
 					inquirer
 						.prompt([
 							{
-								message: 'Please choose the employee to update their manager',
+								message: `
+								
+Please choose the employee to update their manager
+
+`,
 								type: 'list',
 								name: 'employeeToUpdate',
 								choices() {
@@ -385,7 +445,11 @@ function updateEmployeeManager() {
 								},
 							},
 							{
-								message: 'Please choose the new manager to assign the employee',
+								message: `
+					
+Please choose the new manager to assign the employee
+
+`,
 								type: 'list',
 								name: 'newManager',
 								choices() {
@@ -418,7 +482,13 @@ function updateEmployeeManager() {
 								(err) => {
 									if (err) throw err;
 									console.log(
-										`Successfully updated ${res.employeeToUpdate}'s new manager to ${res.newManager}`
+										`
+
+-------------------------------------------------------------------------------
+Successfully updated ${res.employeeToUpdate}'s new manager to ${res.newManager}
+--------------------------------------------------------------------------------
+
+`
 									);
 									homePage();
 								}
@@ -430,12 +500,58 @@ function updateEmployeeManager() {
 	);
 }
 function removeEmployee() {
-	inquirer
-		.prompt(questions.removeEmployeeQuestions)
-		.then((res) => console.log('res :>> ', res))
-		.then(function () {
-			homePage();
-		});
+	connection.query(
+		`SELECT
+		employee.id,
+		employee.first_name,
+		employee.last_name,
+		CONCAT(employee.first_name,' ', employee.last_name) AS full_name
+		FROM employee`,
+		(err, results) => {
+			inquirer
+				.prompt([
+					{
+						message: `
+						
+Please choose the employee to remove
+
+`,
+						type: 'list',
+						name: 'employeeToRemove',
+						choices() {
+							const choiceArray = [];
+							results.forEach((element) => {
+								choiceArray.push(element.full_name);
+							});
+							return choiceArray;
+						},
+					},
+				])
+				.then((res) => {
+					console.log('res :>> ', res);
+					const chosenEmployee = results.filter(
+						(object) => object.full_name === res.employeeToRemove
+					)[0];
+					connection.query(
+						`DELETE FROM employee WHERE ?`,
+						{
+							id: chosenEmployee.id,
+						},
+						(err) => {
+							if (err) throw err;
+							console.log(`
+
+------------------------------------------------							
+Successfully deleted ${res.employeeToRemove}
+------------------------------------------------
+
+`);
+							homePage();
+						}
+					);
+				});
+		}
+	);
 }
 
 connection.connect((err) => {
