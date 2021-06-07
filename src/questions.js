@@ -1,3 +1,5 @@
+const { createConnection } = require('mysql');
+
 const homePageQuestions = [
 	{
 		message: 'What would you like to do?',
@@ -73,7 +75,23 @@ const employeesByManager = [
 		message: 'Choose the Manager to see their employees',
 		type: 'list',
 		name: 'managerOfEmployees',
-		choices: ['get list of managers'],
+		choices() {
+			connection.query(
+				`SELECT 
+				CONCAT(manager.first_name,' ', manager.last_name) AS manager
+				FROM employee
+				LEFT JOIN employee AS manager
+				ON employee.manager_id = manager.id
+				WHERE employee.manager_id IS NOT NULL`,
+				(err, results) => {
+					const choiceArray = [];
+					results.forEach((element) => {
+						choiceArray.push(element.manager);
+					});
+					return choiceArray;
+				}
+			);
+		},
 	},
 ];
 
