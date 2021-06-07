@@ -38,6 +38,9 @@ function homePage() {
 			case 'Update employee roles':
 				updateEmployeeRole();
 				break;
+			case 'Update employee manager':
+				updateEmployeeManager();
+				break;
 			case 'Remove employee':
 				removeEmployee();
 				break;
@@ -285,14 +288,12 @@ function updateEmployeeRole() {
 		CONCAT(employee.first_name,' ', employee.last_name) AS full_name
 		FROM employee`,
 		(err, results) => {
-			console.log('results :>> ', results);
 			connection.query(
 				`SELECT
 				id,
 				title AS role
 				FROM role`,
 				(err, data) => {
-					console.log('data :>> ', data);
 					inquirer
 						.prompt([
 							{
@@ -321,7 +322,6 @@ function updateEmployeeRole() {
 							},
 						])
 						.then((res) => {
-							console.log('res :>> ', res);
 							const newRole = data.filter(
 								(object) => object.role === res.roleToGive
 							)[0];
@@ -353,8 +353,83 @@ function updateEmployeeRole() {
 		}
 	);
 }
+function updateEmployeeManager() {
+	connection.query(
+		`SELECT
+		employee.id,
+		employee.first_name,
+		employee.last_name,
+		CONCAT(employee.first_name,' ', employee.last_name) AS full_name
+		FROM employee`,
+		(err, results) => {
+			connection.query(
+				`SELECT
+				employee.id,
+				employee.first_name,
+				employee.last_name,
+				CONCAT(employee.first_name,' ', employee.last_name) AS full_name
+				FROM employee`,
+				(err, data) => {
+					inquirer
+						.prompt([
+							{
+								message: 'Please choose the employee to update their manager',
+								type: 'list',
+								name: 'employeeToUpdate',
+								choices() {
+									const choiceArray = [];
+									results.forEach((element) => {
+										choiceArray.push(element.full_name);
+									});
+									return choiceArray;
+								},
+							},
+							{
+								message: 'Please choose the new manager to assign the employee',
+								type: 'list',
+								name: 'newManager',
+								choices() {
+									const choiceArray = [];
+									data.forEach((element) => {
+										choiceArray.push(element.full_name);
+									});
+									return choiceArray;
+								},
+							},
+						])
+						.then((res) => {
+							const newManager = data.filter(
+								(object) => object.full_name === res.newManager
+							)[0];
+							const chosenEmployee = results.filter(
+								(object) => object.full_name === res.employeeToUpdate
+							)[0];
+
+							connection.query(
+								`UPDATE employee SET ? WHERE ?`,
+								[
+									{
+										manager_id: newManager.id,
+									},
+									{
+										id: chosenEmployee.id,
+									},
+								],
+								(err) => {
+									if (err) throw err;
+									console.log(
+										`Successfully updated ${res.employeeToUpdate}'s new manager to ${res.newManager}`
+									);
+									homePage();
+								}
+							);
+						});
+				}
+			);
+		}
+	);
+}
 function removeEmployee() {
-	console.log('r e');
 	inquirer
 		.prompt(questions.removeEmployeeQuestions)
 		.then((res) => console.log('res :>> ', res))

@@ -14,6 +14,7 @@ const homePageQuestions = [
 			'View all employees',
 			'View all employees by manager',
 			'Update employee roles',
+			'Update employee manager',
 			'Remove employee',
 			'Exit',
 		],
