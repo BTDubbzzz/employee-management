@@ -42,6 +42,7 @@ function homePage() {
 				removeEmployee();
 				break;
 			case 'Exit':
+				connection.end();
 				break;
 		}
 	});
@@ -75,12 +76,27 @@ function addEmployeePrompts() {
 		});
 }
 function viewDepartments() {
-	console.log('v d');
+	connection.query('SELECT * FROM department', (err, results) => {
+		console.table(results);
+		homePage();
+	});
+	// console.log('v d');
 }
 function viewRoles() {
-	console.log('v r');
+	connection.query('SELECT * FROM role', (err, results) => {
+		console.table(results);
+		homePage();
+	});
+	// console.log('v r');
 }
 function viewAllEmployees() {
+	connection.query(
+		`SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, CONCAT(manager.first_name,' ', manager.last_name) AS manager FROM employee JOIN role ON employee.role_id = role.id JOIN department ON role.department_id = department.id LEFT JOIN employee AS manager ON employee.manager_id = manager.id`,
+		(err, results) => {
+			console.table(results);
+			homePage();
+		}
+	);
 	console.log('v e');
 }
 function viewEmployeesByManager() {
@@ -111,4 +127,7 @@ function removeEmployee() {
 		});
 }
 
-homePage();
+connection.connect((err) => {
+	if (err) throw err;
+	homePage();
+});
