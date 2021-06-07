@@ -20,6 +20,8 @@ What would you like to do?
 			'Update employee roles',
 			'Update employee manager',
 			'Remove employee',
+			'Remove role',
+			'Remove department',
 			'Exit',
 		],
 	},

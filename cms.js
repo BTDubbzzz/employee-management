@@ -44,6 +44,12 @@ function homePage() {
 			case 'Remove employee':
 				removeEmployee();
 				break;
+			case 'Remove role':
+				removeRole();
+				break;
+			case 'Remove department':
+				removeDepartment();
+				break;
 			case 'Exit':
 				console.log(`
 				
@@ -528,7 +534,6 @@ Please choose the employee to remove
 					},
 				])
 				.then((res) => {
-					console.log('res :>> ', res);
 					const chosenEmployee = results.filter(
 						(object) => object.full_name === res.employeeToRemove
 					)[0];
@@ -543,6 +548,105 @@ Please choose the employee to remove
 
 ------------------------------------------------							
 Successfully deleted ${res.employeeToRemove}
+------------------------------------------------
+
+`);
+							homePage();
+						}
+					);
+				});
+		}
+	);
+}
+function removeDepartment() {
+	connection.query(
+		`SELECT id, name AS department FROM department`,
+		(err, results) => {
+			inquirer
+				.prompt([
+					{
+						message: `
+						
+Please choose the department to remove
+
+`,
+						type: 'list',
+						name: 'departmentToRemove',
+						choices() {
+							const choiceArray = [];
+							results.forEach((element) => {
+								choiceArray.push(element.department);
+							});
+							return choiceArray;
+						},
+					},
+				])
+				.then((res) => {
+					const chosenDepartment = results.filter(
+						(object) => object.department === res.departmentToRemove
+					)[0];
+					connection.query(
+						`DELETE FROM department WHERE ?`,
+						{
+							id: chosenDepartment.id,
+						},
+						(err) => {
+							if (err) throw err;
+							console.log(`
+
+------------------------------------------------							
+Successfully deleted ${res.departmentToRemove}
+------------------------------------------------
+
+`);
+							homePage();
+						}
+					);
+				});
+		}
+	);
+}
+function removeRole() {
+	connection.query(
+		`SELECT
+		id,
+		title AS role
+		FROM role`,
+		(err, results) => {
+			inquirer
+				.prompt([
+					{
+						message: `
+						
+Please choose the role to remove
+
+`,
+						type: 'list',
+						name: 'roleToRemove',
+						choices() {
+							const choiceArray = [];
+							results.forEach((element) => {
+								choiceArray.push(element.role);
+							});
+							return choiceArray;
+						},
+					},
+				])
+				.then((res) => {
+					const chosenRole = results.filter(
+						(object) => object.role === res.roleToRemove
+					)[0];
+					connection.query(
+						`DELETE FROM role WHERE ?`,
+						{
+							id: chosenRole.id,
+						},
+						(err) => {
+							if (err) throw err;
+							console.log(`
+
+------------------------------------------------							
+Successfully deleted ${res.roleToRemove}
 ------------------------------------------------
 
 `);
