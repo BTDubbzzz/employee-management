@@ -67,10 +67,6 @@ function addRolePrompts() {
 	connection.query(
 		'SELECT id, name AS department FROM department',
 		(err, results) => {
-			console.table(results);
-			results.forEach((element) => {
-				console.log('element :>> ', element);
-			});
 			inquirer
 				.prompt([
 					...questions.addRoleQuestions,
@@ -88,7 +84,6 @@ function addRolePrompts() {
 					},
 				])
 				.then((res) => {
-					console.log('res :>> ', res);
 					const chosenDepartmentID = results.filter(
 						(object) => object.department === res.roleDepartmentName
 					)[0];
@@ -116,15 +111,12 @@ function addEmployeePrompts() {
 		title AS role
 		FROM role`,
 		(err, results) => {
-			console.log('results :>> ', results);
 			connection.query(
 				`SELECT
 				id,
 				CONCAT(first_name,' ', last_name) AS manager
 				FROM employee`,
 				(err, data) => {
-					console.log('data :>> ', data);
-
 					inquirer
 						.prompt([
 							...questions.addEmployeeQuestions,
@@ -154,7 +146,6 @@ function addEmployeePrompts() {
 							},
 						])
 						.then((res) => {
-							console.log('res :>> ', res);
 							const chosenRole = results.filter(
 								(object) => object.role === res.employeeRole
 							)[0];
@@ -165,10 +156,6 @@ function addEmployeePrompts() {
 								chosenManager = 'NULL';
 								chosenManager.id = 'NULL';
 							}
-
-							console.log('chosenRole :>> ', chosenRole);
-							console.log('chosenManager :>> ', chosenManager);
-
 							connection.query(
 								`INSERT INTO employee SET ?`,
 								{
@@ -281,7 +268,6 @@ function viewEmployeesByManager() {
 						employee.manager_id = manager.id
 						WHERE employee.manager_id = ${chosenManager.manager_id}`,
 						(err, results) => {
-							// console.log('results :>> ', results);
 							console.table(results);
 							homePage();
 						}
@@ -291,13 +277,81 @@ function viewEmployeesByManager() {
 	);
 }
 function updateEmployeeRole() {
-	console.log('u r');
-	inquirer
-		.prompt(questions.updateRoleQuestions)
-		.then((res) => console.log('res :>> ', res))
-		.then(function () {
-			homePage();
-		});
+	connection.query(
+		`SELECT
+		employee.id,
+		employee.first_name,
+		employee.last_name,
+		CONCAT(employee.first_name,' ', employee.last_name) AS full_name
+		FROM employee`,
+		(err, results) => {
+			console.log('results :>> ', results);
+			connection.query(
+				`SELECT
+				id,
+				title AS role
+				FROM role`,
+				(err, data) => {
+					console.log('data :>> ', data);
+					inquirer
+						.prompt([
+							{
+								message: 'Please choose the employee to update their role',
+								type: 'list',
+								name: 'employeeToUpdate',
+								choices() {
+									const choiceArray = [];
+									results.forEach((element) => {
+										choiceArray.push(element.full_name);
+									});
+									return choiceArray;
+								},
+							},
+							{
+								message: 'Please choose the new role to give the employee',
+								type: 'list',
+								name: 'roleToGive',
+								choices() {
+									const choiceArray = [];
+									data.forEach((element) => {
+										choiceArray.push(element.role);
+									});
+									return choiceArray;
+								},
+							},
+						])
+						.then((res) => {
+							console.log('res :>> ', res);
+							const newRole = data.filter(
+								(object) => object.role === res.roleToGive
+							)[0];
+							const chosenEmployee = results.filter(
+								(object) => object.full_name === res.employeeToUpdate
+							)[0];
+
+							connection.query(
+								`UPDATE employee SET ? WHERE ?`,
+								[
+									{
+										role_id: newRole.id,
+									},
+									{
+										id: chosenEmployee.id,
+									},
+								],
+								(err) => {
+									if (err) throw err;
+									console.log(
+										`Successfully updated ${res.employeeToUpdate}'s role to ${res.roleToGive}`
+									);
+									homePage();
+								}
+							);
+						});
+				}
+			);
+		}
+	);
 }
 function removeEmployee() {
 	console.log('r e');
