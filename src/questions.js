@@ -31,9 +31,7 @@ const addDepartmentQuestions = [
 	{
 		message: `
 		
-Please enter the name of the department
-
-`,
+Please enter the name of the department: `,
 		type: 'input',
 		name: 'departmentName',
 	},
@@ -42,18 +40,14 @@ const addRoleQuestions = [
 	{
 		message: `
 		
-Please enter name of new role
-
-`,
+Please enter name of new role: `,
 		type: 'input',
 		name: 'roleName',
 	},
 	{
 		message: `
 		
-Please enter salary of this role
-
-`,
+Please enter salary of this role: `,
 		type: 'input',
 		name: 'roleSalary',
 		validate(value) {
@@ -69,18 +63,14 @@ const addEmployeeQuestions = [
 	{
 		message: `
 		
-Please enter the first name of the employee
-
-`,
+Please enter the first name of the employee: `,
 		type: 'input',
 		name: 'employeeFirstName',
 	},
 	{
 		message: `
 		
-Please enter the last name of the employee
-
-`,
+Please enter the last name of the employee: `,
 		type: 'input',
 		name: 'employeeLastName',
 	},

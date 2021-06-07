@@ -4,6 +4,7 @@
   "description": "This app allows the user to create/read/update/delete information about their employees from a MySQL database",
   "main": "cms.js",
   "dependencies": {
+    "console.table": "^0.10.0",
     "inquirer": "^8.1.0",
     "mysql": "^2.18.1"
   },
