@@ -49,7 +49,6 @@ function homePage() {
 }
 
 function addDepartmentPrompts() {
-	console.log('add d');
 	inquirer.prompt(questions.addDepartmentQuestions).then((res) => {
 		connection.query(
 			`INSERT INTO department SET ?`,
@@ -111,27 +110,88 @@ function addRolePrompts() {
 	);
 }
 function addEmployeePrompts() {
-	console.log('add e');
-	inquirer
-		.prompt([
-			...questions.addEmployeeQuestions,
-			{
-				message: 'Please choose employee role',
-				type: 'list',
-				name: 'employeeRole',
-				choices: ['get list of roles'],
-			},
-			{
-				message: "Please choose the employee's manager",
-				type: 'list',
-				name: 'employeeManager',
-				choices: ['get list of managers'],
-			},
-		])
-		.then((res) => console.log('res :>> ', res))
-		.then(function () {
-			homePage();
-		});
+	connection.query(
+		`SELECT
+		id,
+		title AS role
+		FROM role`,
+		(err, results) => {
+			console.log('results :>> ', results);
+			connection.query(
+				`SELECT
+				id,
+				CONCAT(first_name,' ', last_name) AS manager
+				FROM employee`,
+				(err, data) => {
+					console.log('data :>> ', data);
+
+					inquirer
+						.prompt([
+							...questions.addEmployeeQuestions,
+							{
+								message: 'Please choose employee role',
+								type: 'list',
+								name: 'employeeRole',
+								choices() {
+									const choiceArray = [];
+									results.forEach((element) => {
+										choiceArray.push(element.role);
+									});
+									return choiceArray;
+								},
+							},
+							{
+								message: "Please choose the employee's manager",
+								type: 'list',
+								name: 'employeeManager',
+								choices() {
+									const choiceArray2 = ['No Manager'];
+									data.forEach((element) => {
+										choiceArray2.push(element.manager);
+									});
+									return choiceArray2;
+								},
+							},
+						])
+						.then((res) => {
+							console.log('res :>> ', res);
+							const chosenRole = results.filter(
+								(object) => object.role === res.employeeRole
+							)[0];
+							let chosenManager = data.filter(
+								(object) => object.manager === res.employeeManager
+							)[0];
+							if (res.employeeManager === 'No Manager') {
+								chosenManager = 'NULL';
+								chosenManager.id = 'NULL';
+							}
+
+							console.log('chosenRole :>> ', chosenRole);
+							console.log('chosenManager :>> ', chosenManager);
+
+							connection.query(
+								`INSERT INTO employee SET ?`,
+								{
+									first_name: res.employeeFirstName,
+									last_name: res.employeeLastName,
+									role_id: chosenRole.id,
+									manager_id: chosenManager.id,
+								},
+								(err) => {
+									if (err) throw err;
+									console.log(
+										`You succesfully created new employee: ${
+											res.employeeFirstName + res.employeeLastName
+										}`
+									);
+									homePage();
+								}
+							);
+						});
+				}
+			);
+		}
+	);
 }
 function viewDepartments() {
 	connection.query(
@@ -141,7 +201,6 @@ function viewDepartments() {
 			homePage();
 		}
 	);
-	// console.log('v d');
 }
 function viewRoles() {
 	connection.query(
@@ -158,7 +217,6 @@ function viewRoles() {
 			homePage();
 		}
 	);
-	// console.log('v r');
 }
 function viewAllEmployees() {
 	connection.query(
@@ -182,10 +240,8 @@ function viewAllEmployees() {
 			homePage();
 		}
 	);
-	// console.log('v e');
 }
 function viewEmployeesByManager() {
-	// console.log('v e b m');
 	connection.query(
 		`SELECT DISTINCT
 		employee.manager_id,
