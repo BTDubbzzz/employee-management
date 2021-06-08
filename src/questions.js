@@ -22,6 +22,7 @@ What would you like to do?
 			'Remove employee',
 			'Remove role',
 			'Remove department',
+			'See total cost per department',
 			'Exit',
 		],
 	},

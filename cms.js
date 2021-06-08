@@ -1,7 +1,7 @@
 const mysql = require('mysql');
 const inquirer = require('inquirer');
 const questions = require('./src/questions');
-const cTable = require('console.table');
+// const cTable = require('console.table');
 
 const connection = mysql.createConnection({
 	host: 'localhost',
@@ -50,6 +50,9 @@ function homePage() {
 				break;
 			case 'Remove department':
 				removeDepartment();
+				break;
+			case 'See total cost per department':
+				checkBudget();
 				break;
 			case 'Exit':
 				console.log(`
@@ -655,6 +658,27 @@ Successfully deleted ${res.roleToRemove}
 						}
 					);
 				});
+		}
+	);
+}
+
+function checkBudget() {
+	connection.query(
+		`SELECT 
+		department.name AS department, 
+		SUM(role.salary) as total_cost
+		FROM employee 
+		JOIN role 
+		ON employee.role_id = role.id 
+		JOIN department 
+		ON role.department_id = department.id
+		GROUP BY department_id
+		`,
+
+		(err, data) => {
+			if (err) throw err;
+			console.table(data);
+			homePage();
 		}
 	);
 }
