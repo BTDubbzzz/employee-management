@@ -1,26 +1,27 @@
 {
-  "name": "12_section12",
-  "version": "1.0.0",
-  "description": "This app allows the user to create/read/update/delete information about their employees from a MySQL database",
-  "main": "cms.js",
-  "dependencies": {
-    "console.table": "^0.10.0",
-    "inquirer": "^8.1.0",
-    "mysql": "^2.18.1"
-  },
-  "devDependencies": {},
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/BTDubbzzz/employee-management.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/BTDubbzzz/employee-management/issues"
-  },
-  "homepage": "https://github.com/BTDubbzzz/employee-management#readme"
+	"name": "12_section12",
+	"version": "1.0.0",
+	"description": "This app allows the user to create/read/update/delete information about their employees from a MySQL database",
+	"main": "cms.js",
+	"dependencies": {
+		"console.table": "^0.10.0",
+		"inquirer": "^8.1.0",
+		"mysql": "^2.18.1"
+	},
+	"devDependencies": {},
+	"scripts": {
+		"start": "node cms",
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/BTDubbzzz/employee-management.git"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/BTDubbzzz/employee-management/issues"
+	},
+	"homepage": "https://github.com/BTDubbzzz/employee-management#readme"
 }

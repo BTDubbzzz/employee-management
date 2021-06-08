@@ -32,18 +32,17 @@ function createListQuestion(
 	NAME_PARAM,
 	PROPERTY_PARAM,
 	results,
-	choiceArray = []
+	ARRAY_PARAM
 ) {
 	const object = {
 		message: messages.listMessage(LIST_PARAM_1, LIST_PARAM_2),
 		type: 'list',
 		name: NAME_PARAM,
 		choices() {
-			const choiceArray = [];
 			results.forEach((element) => {
-				choiceArray.push(element[PROPERTY_PARAM]);
+				ARRAY_PARAM.push(element[PROPERTY_PARAM]);
 			});
-			return choiceArray;
+			return ARRAY_PARAM;
 		},
 	};
 	return object;
@@ -127,7 +126,8 @@ function addRolePrompts() {
 					UPDATE_ROLE,
 					'roleDepartmentName',
 					'department',
-					results
+					results,
+					[]
 				),
 			])
 			.then((res) => {
@@ -156,7 +156,7 @@ function addEmployeePrompts() {
 			inquirer
 				.prompt([
 					...questions.addEmployeeQuestions,
-					createListQuestion(ROLE, GIVE, 'employeeRole', 'role', results),
+					createListQuestion(ROLE, GIVE, 'employeeRole', 'role', results, []),
 					createListQuestion(MANAGER, GIVE, 'employeeManager', 'manager', data, [
 						'No Manager',
 					]),
@@ -216,7 +216,8 @@ function viewEmployeesByManager() {
 					VIEW_EMPLOYEES,
 					'managerOfEmployees',
 					'manager',
-					results
+					results,
+					[]
 				),
 			])
 			.then((res) => {
@@ -244,9 +245,10 @@ function updateEmployeeRole() {
 						UPDATE_ROLE,
 						'employeeToUpdate',
 						'full_name',
-						results
+						results,
+						[]
 					),
-					createListQuestion(ROLE, GIVE, 'roleToGive', 'role', data),
+					createListQuestion(ROLE, GIVE, 'roleToGive', 'role', data, []),
 				])
 				.then((res) => {
 					const newRole = data.filter((object) => object.role === res.roleToGive)[0];
@@ -291,9 +293,10 @@ function updateEmployeeManager() {
 						UPDATE_MANAGER,
 						'employeeToUpdate',
 						'full_name',
-						results
+						results,
+						[]
 					),
-					createListQuestion(MANAGER, GIVE, 'newManager', 'full_name', data),
+					createListQuestion(MANAGER, GIVE, 'newManager', 'full_name', data, []),
 				])
 				.then((res) => {
 					const newManager = data.filter(
@@ -336,7 +339,8 @@ function removeConnectionQuery(
 	ITEM_TYPE_PARAM,
 	NAME_PARAM,
 	PROPERTY_PARAM,
-	QUERY_PARAM_2
+	QUERY_PARAM_2,
+	ARRAY_PARAM
 ) {
 	connection.query(QUERY_PARAM, (err, results) => {
 		inquirer
@@ -346,7 +350,8 @@ function removeConnectionQuery(
 					DELETE,
 					NAME_PARAM,
 					PROPERTY_PARAM,
-					results
+					results,
+					ARRAY_PARAM
 				),
 			])
 			.then((res) => {
@@ -376,7 +381,8 @@ function removeEmployee() {
 		EMPLOYEE,
 		'employeeToRemove',
 		'full_name',
-		queries.deleteEmployeeQuery
+		queries.deleteEmployeeQuery,
+		[]
 	);
 }
 
@@ -386,7 +392,8 @@ function removeDepartment() {
 		DEPARTMENT,
 		'departmentToRemove',
 		'department',
-		queries.deleteDepartmentQuery
+		queries.deleteDepartmentQuery,
+		[]
 	);
 }
 function removeRole() {
@@ -395,7 +402,8 @@ function removeRole() {
 		ROLE,
 		'roleToRemove',
 		'role',
-		queries.deleteRoleQuery
+		queries.deleteRoleQuery,
+		[]
 	);
 }
 
