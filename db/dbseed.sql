@@ -1,27 +1,45 @@
 INSERT INTO department (name)
 VALUES
-('Sales')
-,('Engineering')
+('Front Office')
+,('Coaching Staff')
+,('Players')
 ,('Finance')
-,('Legal');
+,('Communications')
+,('Executive');
 
 INSERT INTO role (title, salary, department_id)
 VALUES
-('Sales Lead', 100000, 1)
-,('Salesperson', 80000, 1)
-,('Lead Engineer', 150000, 2)
-,('Software Engineer', 125000, 2)
-,('Accountant', 95000, 3)
-,('Legal Team Lead', 250000, 4)
-,('Lawyer', 200000, 4);
+('General Manager', 6500000, 1)
+,('Head Coach', 9500000, 2)
+,('Defensive Coordinator', 1500000, 2)
+,('Offensive Coordinator', 1750000, 2)
+,('Quarterback', 40000000, 3)
+,('Wide Receiver', 11000000, 3)
+,('Left Tackle', 3300000, 3)
+,('Accountant', 170000, 4)
+,('Head of Accounting', 450000, 4)
+,('Communications Assistant', 125000, 5)
+,('VP of Communications', 1125000, 5)
+,('CEO', 35000000, 6)
+,('President', 20000000, 6)
+,('CIO', 22000000, 6)
+,('CFO', 25000000, 6);
 
 INSERT INTO employee(first_name, last_name, role_id, manager_id)
 VALUES
-('John', 'Doe', 1, NULL)
-,('Mike', 'Chan', 2, 1)
-,('Ashley', 'Rodriquez', 3, NULL)
-,('Kevin', 'Tupik', 4, 3)
-,('Malia', 'Brown', 5, NULL)
-,('Sarah', 'Lourd', 6, NULL)
-,('Tom', 'Allen', 7, 6)
-,('Tammer', 'Galal', 4, 3);
+('Brett', 'Veach', 1, 13)
+,('Andy', 'Reid', 2, 13)
+,('Steve', 'Spagnuolo', 3, 2)
+,('Eric', 'Bieniemy', 4, 2)
+,('Patrick', 'Mahomes', 5, 2)
+,('Mecole', 'Hardman', 6, 4)
+,('Tyreek', 'Hill', 6, 4)
+,('Orlando', 'Brown, Jr.', 7, 5)
+,('Sherry', 'Brown', 8, 9)
+,('Sherry', 'Lathrop', 9, 16)
+,('Jordan', 'Trgovac', 10, 12)
+,('Ted', 'Crews', 11, 15)
+,('Clark', 'Hunt', 12, NULL)
+,('Mark', 'Donovan', 13, NULL)
+,('Kevin', 'Higgins', 14, 13)
+,('Dan', 'Crumb', 15, 13);

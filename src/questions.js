@@ -1,5 +1,3 @@
-const { createConnection } = require('mysql');
-
 const homePageQuestions = [
 	{
 		message: `
