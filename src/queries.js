@@ -106,25 +106,3 @@ module.exports = {
 	deleteRoleQuery,
 	checkBudgetQuery,
 };
-
-function createListQuestion(
-	LIST_PARAM_1,
-	LIST_PARAM_2,
-	NAME_PARAM,
-	PROPERTY_PARAM,
-	results
-) {
-	const object = {
-		message: messages.listMessage(LIST_PARAM_1, LIST_PARAM_2),
-		type: 'list',
-		name: NAME_PARAM,
-		choices() {
-			const choiceArray = [];
-			results.forEach((element) => {
-				choiceArray.push(element[PROPERTY_PARAM]);
-			});
-			return choiceArray;
-		},
-	};
-	return object;
-}
